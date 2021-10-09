@@ -1,6 +1,3 @@
-[一、数据结构概述](# 1.数据结构概述)
-[二、预备知识](# 2.预备知识)
-
 # 1.数据结构概述
 ## 1.1 数据结构定义：什么叫数据结构？
 我们如何把现实中大量而复杂的问题以特定的数据类型和特定的存储结构保存到主存储器（内存）中，以及在此基础上为实现某个功能（比如查找某个元素，删除某个元素，对所有元素进行排序）而执行的相应操作，这个相应的操作叫算法。<br><br>
@@ -144,157 +141,194 @@ p++ <==> p+1
 ## 2.2 结构体
 ### 2.2.1 为什么会出现结构体？
 为了表示一些复杂的数据，而普通的基本类型变量无法满足要求。
-2.2.2 	什么叫做结构体？
+
+### 2.2.2 什么叫做结构体？
 结构体是用户根据实际需要自己定义的复合数据类型。
-2.2.3 	如何使用结构体？
-两种方式：
+
+### 2.2.3 如何使用结构体？
+两种方式：<br>
+
+```
 Struct student st = {1000,”zhangsan”,20};
+```
+
+```
 Struct student *pst=&st;
-1. st.sid
+```
+
+1. st.sid<br>
 2. pst->sid：pst所指向的结构体变量中的sid这个成员
-2.2.4 	注意事项：
-结构体变量不能加减乘除，但可以相互赋值
-普通结构体变量和结构体指针变量作为函数传参的问题
+
+### 2.2.4 注意事项：
+结构体变量不能加减乘除，但可以相互赋值<br>
+普通结构体变量和结构体指针变量作为函数传参的问题<br>
 例程1：
+
+```
 #include <stdio.h>
 Struct student
 {
-	Int sid;
-	Char name[200];
-	Int age;
+  int sid;
+  char name[200];
+  int age;
 };
-Int main(void)
+
+int main(void)
 {
-	Struct student st = {1000,”zhangsan”,20};
-	//st.sid = 99; //第一种方式
-	
-	Struct student *pst;
-	pst = &st;
-	pst->sid = 99; //pst->sid等价于(*pst).sid，而(*pst).sid等价于st.sid，所以pst->sid等价于st.sid
-
-	return 0;
+  Struct student st = {1000,”zhangsan”,20};
+  //st.sid = 99; //第一种方式
+  
+  Struct student *pst;
+  pst = &st;
+  pst->sid = 99; //pst->sid等价于(*pst).sid，而(*pst).sid等价于st.sid，所以pst->sid等价于st.sid
+  
+  return 0;
 }
-
+```
 例程2：
+
+```
 #include <stdio.h>
 #include <string.h>
 Struct student
 {
-	Int sid;
-	Char name[200];
-	Int age;
+  int sid;
+  char name[200];
+  int age;
 };
-Void f(struct student *pst);
-Void g(struct student st);
-Void g2(struct student *pst);
-Int main(void)
+
+void f(struct student *pst);
+void g(struct student st);
+void g2(struct student *pst);
+int main(void)
 {
-	Struct student st;
-			f(&st);
-			//g(st);
-			g2(&st);
-			return 0;
+  Struct student st;
+  f(&st);
+  //g(st);
+  g2(&st);
+  
+  return 0;
 }
+
 //这种方式耗内存，耗时间，不推荐
-Void g(struct student st)
+void g(struct student st)
 {
-	Printf(“%d %s %d\n”,st.sid,st.name,st.age);
+  Printf(“%d %s %d\n”,st.sid,st.name,st.age);
 }
-Void g2(struct student *pst)
+void g2(struct student *pst)
 {
-	printf(“%d %s %d\n”,pst->sid,pst->name,pst->age);
+  printf(“%d %s %d\n”,pst->sid,pst->name,pst->age);
 }
-Void f(struct student *pst)
+void f(struct student *pst)
 {
-	(*pst).sid = 99;
-	Strcpy(pst->name,”zhangsan”);
-	Pst->age = 22;
+  (*pst).sid = 99;
+  strcpy(pst->name,”zhangsan”);
+  pst->age = 22;
 }
-2.3 动态内存的分配和释放
-2.3.1 	动态构造一维数组
-2.3.1.1 假设动态构造一个int型数组
+```
+
+## 2.3 动态内存的分配和释放
+### 2.3.1 动态构造一维数组
+#### 2.3.1.1 假设动态构造一个int型数组
+实现代码：
+
+```
 #include <stdio.h>
 #include <malloc.h>
-Int main(void)
+int main(void)
 {
-	Int a[5] = {4, 10, 2, 8, 6};
-
-	Int len;
-	Scanf(“%d”,&len);
-	Int * pArr = (int *)malloc(sizeof(int) * len);
-	//*pArr = 4; //类似于a[0]=4
-	//pArr[1] = 10;//类似于a[1]=10
-	//Printf(“%d %d\n”, *pArr, pArr[1]);
-
-	//我们可以把pArr当做一个普通数组来使用
-	For (int i=0; i<len; ++i)
-		Scanf(“%d”,&pArr[i]);
-	
-	For (i=0; i<len; ++i)
-		Printf(“%d\n”, *(pArr+i));
-	Free(pArr); //把pArr所代表的动态分配的20个字节的内存释放
-Return 0;
+  int a[5] = {4, 10, 2, 8, 6};
+  
+  int len;
+  scanf(“%d”,&len);
+  int * pArr = (int *)malloc(sizeof(int) * len);
+  //*pArr = 4; //类似于a[0]=4
+  //pArr[1] = 10;//类似于a[1]=10
+  //printf(“%d %d\n”, *pArr, pArr[1]);
+  
+  //我们可以把pArr当做一个普通数组来使用
+  for (int i=0; i<len; ++i)
+  scanf(“%d”,&pArr[i]);
+  
+  for (i=0; i<len; ++i)
+  printf(“%d\n”, *(pArr+i));
+  free(pArr); //把pArr所代表的动态分配的20个字节的内存释放
+  
+  return 0;
 }
-1. 分配了两块内存，一块内存是动态分配的，总共len个字节；另一块是静态分配的，是pArr变量本身所占的内存，总共4个字节。
-2. malloc只有一个int型的形参，表示要求系统分配的字节数。
-3. malloc函数的功能时请求系统分配len个字节的内存空间，如果分配成功，则返回第一个字节的地址，如果分配不成功，则返回NULL。
-4. malloc函数能且只能返回第一个字节的地址，所以我们需要把这个无任何实际意义的第一个字节的地址（俗称干地址）转化为一个有实际意义的地址，因此，malloc函数前面必须加强制类型转换（数据类型*），表示把这个无实际意义的第一个字节的地址转化为响应类型的地址。
+```
+
+1. 分配了两块内存，一块内存是动态分配的，总共len个字节；另一块是静态分配的，是pArr变量本身所占的内存，总共4个字节。<br>
+2. malloc只有一个int型的形参，表示要求系统分配的字节数。<br>
+3. malloc函数的功能时请求系统分配len个字节的内存空间，如果分配成功，则返回第一个字节的地址，如果分配不成功，则返回NULL。<br>
+4. malloc函数能且只能返回第一个字节的地址，所以我们需要把这个无任何实际意义的第一个字节的地址（俗称干地址）转化为一个有实际意义的地址，因此，malloc函数前面必须加强制类型转换（数据类型*），表示把这个无实际意义的第一个字节的地址转化为响应类型的地址。<br>
 5. free(*pArr)表示把pArr所指向的内存给释放掉，pArr本身的内存是静态的，不能由程序员手动释放，只能在pArr变量所在的函数运行终止时由系统自动释放。
-2.3.1.2 跨函数使用内存
+
+#### 2.3.1.2 跨函数使用内存
+实现代码：
+
+```
 #include <stdio.h>
 #include <malloc.h>
 
 Struct student
 {
-	Int sid;
-	Int age;
+  int sid;
+  int age;
 };
 
 Struct student * createstudent(void);
-Void showstudent(struct student *);
+void showstudent(struct student *);
 
-Int main(void)
+int main(void)
 {
-	Struct student * ps;
-	
-	Ps = createstudent();
-	Showstudent();
-
-	Return 0;
+  Struct student * ps;
+  
+  ps = createstudent();
+  Showstudent();
+  
+  return 0;
 }
 
-Void showstudent(struct student *pst)
+void showstudent(struct student *pst)
 {
-	Printf(“%d %d\n”, pst->sid, pst->age);
+  printf(“%d %d\n”, pst->sid, pst->age);
 }
 
 Struct student * createstudent(void)
 {
-	Struct student * p = (struct student *)malloc(sizeof(struct student));
-	p->sid = 99;
-	p->age = 88;
+  Struct student * p = (struct student *)malloc(sizeof(struct student));
+  p->sid = 99;
+  p->age = 88;
 
-	return p;
+  return p;
 }
+```
+
 静态内存不可以库函数使用：
--静态内存在函数执行期间可以被其他函数使用
--静态内存在函数执行完毕之后就不能再被其他函数使用
+- 静态内存在函数执行期间可以被其他函数使用
+- 静态内存在函数执行完毕之后就不能再被其他函数使用<br>
 动态内存可以跨函数使用：
--动态内存在函数执行完毕之后仍然可以被其他函数使用
+- 动态内存在函数执行完毕之后仍然可以被其他函数使用<br>
  
-3 模块一：线性结构
+# 3.模块一：线性结构
 什么是线性结构？
-把所有的结点（数组的元素）用一根直线串起来
-3.1 连续存储【数组】
+- 把所有的结点（数组的元素）用一根直线串起来
+
+## 3.1 连续存储【数组】
 1. 什么叫数组？
-元素类型相同，大小相等
+- 元素类型相同，大小相等<br>
 2. 数组的优缺点（与链表比较）：
-	优点：存取速度快
-	缺点：
-实现必须知道数组的长度
-		需要大块连续的内存块
-		插入和删除元素很慢
-		空间通常是有限制的
+- 优点：存取速度快
+- 缺点：
+	- 实现必须知道数组的长度
+	- 需要大块连续的内存块
+	- 插入和删除元素很慢
+	- 空间通常是有限制的
+<br>
+实现代码：
+
+```
 #include <stdio.h>
 #include <malloc.h>
 #include <stdlib.h>
@@ -302,230 +336,247 @@ Struct student * createstudent(void)
 //定义了一个数据类型，该数据类型，该数据类型的名字叫做struct Arr，该数据类型含有三个成员，分别是pBase，len，cnt；
 Struct Arr
 {
-	Int * pBase; //存储的是数组第一个元素的地址
-	Int len; //数组所能容纳的最大元素的个数
-	Int cnt; //当前数组有效元素的个数
-	//Int increment; //自动增长因子
+  int * pBase; //存储的是数组第一个元素的地址
+  int len; //数组所能容纳的最大元素的个数
+  int cnt; //当前数组有效元素的个数
+  //int increment; //自动增长因子
 }
 
-Void init_arr(struct Arrr *pArr, int length);
-Bool append_arr(struct Arr *pArr, int val); //追加元素
-Bool insert_arr(struct Arr *pArr, int pos, int val); //插入元素 pos的值从1开始
-Bool delete_arr(struct Arr *pArr, int pos, int *pVal); //删除元素
+void init_arr(struct Arrr *pArr, int length);
+bool append_arr(struct Arr *pArr, int val); //追加元素
+bool insert_arr(struct Arr *pArr, int pos, int val); //插入元素 pos的值从1开始
+bool delete_arr(struct Arr *pArr, int pos, int *pVal); //删除元素
 int get();
-Bool is_empty(struct Arrr *pArr); //判断数组是否为空
-Bool is_full(struct Arrr *pArr); //判断数组是否存满
-Void sort_arr(struct Arr *pArr);
-Void show_arr(struct Arr *pArr);
-Void inversion_arr(struct Arr *pArr);
+bool is_empty(struct Arrr *pArr); //判断数组是否为空
+bool is_full(struct Arrr *pArr); //判断数组是否存满
+void sort_arr(struct Arr *pArr);
+void show_arr(struct Arr *pArr);
+void inversion_arr(struct Arr *pArr);
 
-Int main(void)
+int main(void)
 {
-	Struct Arr arr;
-	Int val;
-	
-	Init_arr(&arr, 6);
-	Show_arr(&arr);
-	Append_arr(&arr, 1);
-	Delete_arr(&arr, 1, &val);
-	
-	Return 0;
+  Struct Arr arr;
+  int val;
+  
+  init_arr(&arr, 6);
+  Show_arr(&arr);
+  Append_arr(&arr, 1);
+  Delete_arr(&arr, 1, &val);
+  
+  return 0;
 }
 
 Void init_arr(struct Arr *pArr, int length)
 {
-	pArr->pBase = (int *)malloc(sizeof(int) * length);
-	if (NULL == pArr->pBase)
-	{
-	Printf(“动态内存分配失败！”);
-	Exit(-1); //终止整个程序
-}
-Else
-{
-	pArr->len = length;
-	pArr->cnt = 0;
+  pArr->pBase = (int *)malloc(sizeof(int) * length);
+  if (NULL == pArr->pBase)
+  {
+    printf(“动态内存分配失败！”);
+    exit(-1); //终止整个程序
+  }
+  else
+  {
+    pArr->len = length;
+    pArr->cnt = 0;
+  }
+  
+  return;
 }
 
-Return;
-}
-
-Bool is_empty(struct Arrr *pArr)
+bool is_empty(struct Arrr *pArr)
 {
-	If (0 == pArr->cnt)
-		Return True;
-	Else
-		Return false;
+  if (0 == pArr->cnt)
+    return True;
+  else
+    return false;
 }
 
 Bool is_full(struct Arrr *pArr)
 {
-	If (pArr->cnt == pArr->len)
-		Return true;
-	Else
-		Return false;
+  if (pArr->cnt == pArr->len)
+    return true;
+  else
+    return false;
 }
 
-Void show_arr(struct Arr *pArr)
+void show_arr(struct Arr *pArr)
 {
-	If (is_empty(pArr) == True)
-	{
-		Printf(“数组为空！\n”);
+  if (is_empty(pArr) == True)
+  {
+    printf(“数组为空！\n”);
+  }
+  else
+  {
+    for (i=0; i<pArr->cnt; ++i)
+    printf(“%d”, pArr->pBase[i]);
+    printf(“\n”);
+  }
 }
-Else
+
+bool append_arr(struct Arrr *pArr, int val)
 {
-	For (i=0; i<pArr->cnt; ++i)
-		Printf(“%d”, pArr->pBase[i]);
-	Printf(“\n”);
-}
+  //存满时返回false
+  if (is_full(pArr))
+    return false;
+  //未存满时追加
+  else
+  {
+    pArr->pBase[pArr->cnt] = val;
+    (pArr->cnt)++;
+    return True;
+  }
 }
 
-Bool append_arr(struct Arrr *pArr, int val)
+bool insert_arr(struct Arr *pArr, int pos, int val)
 {
-	//存满时返回false
-	If (is_full(pArr))
-		Return false;
-	//未存满时追加
-	Else
-	{
-		pArr->pBase[pArr->cnt] = val;
-		(pArr->cnt)++;
-		Return True;
-}
+  int i;
+  if (is_full(pArr))
+    return false;
+    
+  if (pos<1 || pos>pArr->cnt+1)
+    return false;
+  for (i=pArr->cnt-1; i>=pos-1; --i)
+  {
+    pArr->pBase[i] = pArr->pBase[i+1];
+  }
+  pArr->pBase[pos-1] = val;
+  (pArr->cnt)++;
+  
+  return true;
 }
 
-Bool insert_arr(struct Arr *pArr, int pos, int val)
+bool delete_arr(struct Arr *pArr, int pos, int *pVal)
 {
-	Int I;
-	If (is_full(pArr))
-		Return false;
-	
-	If (pos<1 || pos>pArr->cnt+1)
-		Return false;
-	For (i=pArr->cnt-1; i>=pos-1; --i)
-	{
-		pArr->pBase[i] = pArr->pBase[i+1];
+  int i;
+  
+  if (is_empty(pArr))
+    return false;
+  if (pos<1 || pos>pArr->cnt)
+    return false;
+    
+  *pVal = pArr->pBase[pos-1];
+  for (i=pos; i<pArr->cnt; ++i)
+  {
+    pArr->pBase[i-1] = pArr->pBase[i];
+  }
+  pArr->cnt--;
+  
+  return true;
 }
-pArr->pBase[pos-1] = val;
-(pArr->cnt)++;
 
-return True;
-}
-
-Bool delete_arr(struct Arr *pArr, int pos, int *pVal)
+void inversion_arr(struct Arr *pArr)
 {
-	Int I;
-	
-	If (is_empty(pArr))
-		Return false;
-	If (pos<1 || pos>pArr->cnt)
-		Return false;
-	
-	*pVal = pArr->pBase[pos-1];
-	For (i=pos; i<pArr->cnt; ++i)
-	{
-	pArr->pBase[i-1] = pArr->pBase[i];
+  int i = 0;
+  int j = pArr->cnt-1;
+  int t;
+  
+  while (i<j)
+  {
+    t = pArr->pBase[i];
+    pArr->pBase[i] = pArr->pBase[j];
+    pArr->pBase[j] = t;
+    ++i;
+    --j;
+  }
+  
+  return;
 }
-pArr->cnt--;
 
-return true;
-}
-
-Void inversion_arr(struct Arr *pArr)
+void sort_arr(struct Arr *pArr)
 {
-	Int i = 0;
-	Int j = pArr->cnt-1;
-	Int t;
+  int i,j;
+  
+  for (i=0; i<pArr->cnt; ++i)
+  {
+    for (j=i+1; j<pArr->cnt; ++j)
+    {
+      if (pArr->pBase[i] > pArr->pBase[j])
+      {
+        t = pArr->pBase[i];
+	pArr->pBase[i] = pArr->pBase[j];
+	pArr->pBase[j] = t;
+      }
+    }
+  }
+}
+```
 
-	While (i<j)
-	{
-		t = pArr->pBase[i];
-		pArr->pBase[i] = pArr->pBase[j];
-		pArr->pBase[j] = t;
-		++I;
-		--j;
-}
+## 3.2 离散存储【链表】
+### 3.2.1 Typedef的用法
+例程一：
 
-Return;
-}
-
-Void sort_arr(struct Arr *pArr)
-{
-	Int i,j;
-	
-	For (i=0; i<pArr->cnt; ++i)
-	{
-	For (j=i+1; j<pArr->cnt; ++j)
-	{
-		If (pArr->pBase[i] > pArr->pBase[j])
-		{
-t = pArr->pBase[i];
-			pArr->pBase[i] = pArr->pBase[j];
-			pArr->pBase[j] = t;
-}
-}
-}
-}
-3.2 离散存储【链表】
-3.2.1 Typedef的用法
+```
 #include<stdio.h>
 
 Typedef Struct student
 {
-	Int sid;
-	Char name[100];
-	Char sex;
+  int sid;
+  char name[100];
+  char sex;
 }ST;
 
-Int main(void)
+int main(void)
 {
-	Struct student st; //等价于ST st；
-	Struct student * ps = &st; //等价于ST * ps;
+  Struct student st; //等价于ST st；
+  Struct student * ps = &st; //等价于ST * ps;
 
-	ST st2;
-	St2.sid = 200;
-	Printf(“%d\n”, st2.sid);
+  ST st2;
+  St2.sid = 200;
+  printf(“%d\n”, st2.sid);
 	
-	Return 0;
+  return 0;
 }
+```
+例程2：
 
+```
 #include<stdio.h>
 
 Typedef Struct student
 {
-	Int sid;
-	Char name[100];
-	Char sex;
+  int sid;
+  char name[100];
+  char sex;
 }*PSTU, STU; //等价于STU代表了struct student, PSTU代表了struct student *
 
-Int main(void)
+int main(void)
 {
-	STU st; //struct student st
-	PSTU ps = &st; //struct student * ps = &st;
-	ps->sid = 99
-	printf(“%d\n”, ps->sid);
-
-	return 0;
+  STU st; //struct student st
+  PSTU ps = &st; //struct student * ps = &st;
+  ps->sid = 99
+  printf(“%d\n”, ps->sid);
+  
+  return 0;
 }
-3.2.2 链表介绍
-3.2.2.1 定义：
-n个节点离散分配
-彼此通过指针相连
-每个节点只有一个前驱节点，每个节点只有一个后续节点
+```
+
+### 3.2.2 链表介绍
+#### 3.2.2.1 定义：
+n个节点离散分配<br>
+彼此通过指针相连<br>
+每个节点只有一个前驱节点，每个节点只有一个后续节点<br>
 首节点没有前驱节点 尾节点没有后续节点
-3.2.2.2 链表的优缺点
-优点：空间没有限制；插入删除元素很快
+
+#### 3.2.2.2 链表的优缺点
+优点：
+- 空间没有限制；
+- 插入删除元素很快<br>
 缺点：存取速度很慢
-3.2.2.3 专业术语：
+
+#### 3.2.2.3 专业术语：
 - 首节点：第一个有效的节点
 - 尾节点：最后一个有效的节点
 - 头节点：头节点的数据类型和首节点类型一样，第一个有效节点之前的那个节点，头节点并不存放有效数据，加头节点的目的主要是为了对链表的操作。
 - 头指针：指向头节点的指针变量
-- 尾指针：指向尾节点的指针变量
+- 尾指针：指向尾节点的指针变量<br>
 
-Q：如果希望通过一个函数来对链表进行处理，我们至少需要接收链表的哪些参数？
+Q：如果希望通过一个函数来对链表进行处理，我们至少需要接收链表的哪些参数？<br>
 A：只需要一个参数：头指针；因为我们通过头指针可以推算出链表的其他所有参数。
-3.2.2.4 分类：
+
+#### 3.2.2.4 分类：
 链表的结构体包含两个变量，一个是数据域，另一个是指向下一个节点的指针。
+
+```
 #include <stdio.h>
 
 typedef struct Node
@@ -533,19 +584,26 @@ typedef struct Node
     int data; //数据域
     struct Node * pNext; //指针域
 }NODE, *PNODE;
-3.2.2.4.1 单链表
+```
+
+##### 3.2.2.4.1 单链表
 每一个节点的指针域只能指向后一个节点
-3.2.2.4.2 双链表
+
+##### 3.2.2.4.2 双链表
 每一个节点有两个指针域，一个指向后节点，一个指向前节点
-3.2.2.4.3 循环链表
+
+##### 3.2.2.4.3 循环链表
 能通过任何一个节点找到其他所有的节点
-3.2.2.4.4 非循环链表
-3.2.2.5 算法
-狭义的算法是与数据的存储方式密切相关的
-广义的算法是与数据的存储方式无关的
-泛型：利用某种技术达到的效果就是：不同的存储方式，执行的操作是一样的
-遍历、查找、清空、销毁、求长度、排序、删除节点、插入节点
+
+##### 3.2.2.4.4 非循环链表
+#### 3.2.2.5 算法
+狭义的算法是与数据的存储方式密切相关的<br>
+广义的算法是与数据的存储方式无关的<br>
+泛型：利用某种技术达到的效果就是：不同的存储方式，执行的操作是一样的<br>
+遍历、查找、清空、销毁、求长度、排序、删除节点、插入节点<br>
 实现代码：
+
+```
 #include <stdio.h>
 #include <malloc.h>
 #include <stdlib.h>
@@ -730,18 +788,24 @@ bool delete_list(PNODE pHead, int pos, int *pval)
 
     return true;
 }
-3.3 线性结构的应用
-3.3.1 栈
-3.3.1.1 定义
-一种可以实现“先进后出”的存储结构
+```
+
+## 3.3 线性结构的应用
+### 3.3.1 栈
+#### 3.3.1.1 定义
+一种可以实现“先进后出”的存储结构<br>
 栈类似于箱子
-3.3.1.2 分类
-静态栈：以数组为内核
+
+#### 3.3.1.2 分类
+静态栈：以数组为内核<br>
 动态栈：以链表为内核
-3.3.1.3 算法
-出栈
-压栈
+
+#### 3.3.1.3 算法
+出栈<br>
+压栈<br>
 实现代码：
+
+```
 #include <stdio.h>
 #include <malloc.h>
 #include <stdlib.h>
@@ -875,47 +939,57 @@ void clear(PSTACK pS)
         pS->pTop = pS->pBottom;
     }
 }
-3.3.1.4 应用
+```
+
+#### 3.3.1.4 应用
 函数调用
 中断
 表达式求值（计算器）
 内存分配
 缓冲处理
 迷宫
-3.3.2 队列
-3.3.2.1 定义
+
+### 3.3.2 队列
+#### 3.3.2.1 定义
 一种可以实现“先进先出”存储结构
-3.3.2.2 分类
-链式队列——用链表实现
+
+#### 3.3.2.2 分类
+链式队列——用链表实现<br>
 静态队列——用数组实现：静态队列通常都必须是循环队列；
-3.3.2.2.1 循环队列
-1. 静态队列为什么必须是循环队列？
-A：普通队列的参数front和rear只增不减，导致内存浪费。
-2. 循环队列需要几个参数来确定？及其含义的讲解？
-A：需要两个参数来确定，front/rear。
-3. 循环队列各个参数的含义？
+
+##### 3.3.2.2.1 循环队列
+1. 静态队列为什么必须是循环队列？<br>
+A：普通队列的参数front和rear只增不减，导致内存浪费。<br><br>
+2. 循环队列需要几个参数来确定？及其含义的讲解？<br>
+A：需要两个参数来确定，front/rear。<br><br>
+3. 循环队列各个参数的含义？<br>
 A：两个参数不同场合有不同的含义；建议初学者先记住，然后慢慢体会。
-1)	队列初始化：front和rear的值都是零。
-2)	队列非空：front代表队列的第一个元素，rear代表队列的最后一个有效元素的下一个元素。
-3)	队列空：front和rear的值相等，但不一定是零。
-4. 循环队列入队伪算法讲解（在尾部入队）
+   - 1.队列初始化：front和rear的值都是零。
+   - 2.队列非空：front代表队列的第一个元素，rear代表队列的最后一个有效元素的下一个元素。
+   - 3.队列空：front和rear的值相等，但不一定是零。<br><br>
+4. 循环队列入队伪算法讲解（在尾部入队）<br>
 A：第一步：将值存入rear所指向的位置
-第二步：rear=(rear+1)%数组的长度
-5. 循环队列出队伪算法讲解（在头部出队）
-A：front=(front+1)%数组的长度
-6. 如何判断循环队列是否为空？
-A：如果front与rear的值相等，则该队列一定为空
-7. 如何判断循环队列是否已满？
+   第二步：rear=(rear+1)%数组的长度<br><br>
+5. 循环队列出队伪算法讲解（在头部出队）<br>
+A：front=(front+1)%数组的长度<br><br>
+6. 如何判断循环队列是否为空？<br>
+A：如果front与rear的值相等，则该队列一定为空<br><br>
+7. 如何判断循环队列是否已满？<br>
 A：预备知识：front值可能比rear大，front值也可能比rear小，两者也可能相等。
-第一种方法：多增加一个标识参数，即数组的长度
-第二种方法（常用）：少用一个元素，即长度为10只使用9个空间存放数据；如果front==(rear+1)%数组的长度，则循环队列已满
-3.3.2.3 具体应用
+   - 第一种方法：多增加一个标识参数，即数组的长度
+   - 第二种方法（常用）：少用一个元素，即长度为10只使用9个空间存放数据；如果front==(rear+1)%数组的长度，则循环队列已满
+
+#### 3.3.2.3 具体应用
 所有和时间有关的操作都有队列的影子
-3.4 专题：递归
-3.4.1 定义
+
+## 3.4 专题：递归
+### 3.4.1 定义
 一个函数自己直接或间接调用自己
-3.4.2 例一：1+2+3+4+…+100的和
+
+### 3.4.2 例一：1+2+3+4+…+100的和
 实现代码：
+
+```
 /*阶和的递归实现代码*/
 
 #include <stdio.h>
@@ -961,8 +1035,12 @@ int main(void)
 
     return 0;
 }
-3.4.3 例二：求阶乘
+```
+
+### 3.4.3 例二：求阶乘
 使用For循环的实现代码：
+
+```
 /*阶乘的for循环实现代码*/
 
 #include <stdio.h>
@@ -985,7 +1063,10 @@ int main(void)
 
     return 0;
 }
+```
 使用递归的实现代码：
+
+```
 /*阶乘的递归实现代码*/
 
 #include <stdio.h>
@@ -1031,8 +1112,10 @@ int main(void)
 
     return 0;
 }
-3.4.4 例三：汉诺塔
-4.走迷宫
+```
+
+### 3.4.4 例三：汉诺塔
+3.4.5 走迷宫
 4 模块二：非线性结构
 树
 图
