@@ -982,11 +982,34 @@ A：预备知识：front值可能比rear大，front值也可能比rear小，两�
 #### 3.3.2.3 具体应用
 所有和时间有关的操作都有队列的影子
 
-## 3.4 专题：递归
-### 3.4.1 定义
+# 4.专题：递归
+## 4.1 定义
 一个函数自己直接或间接调用自己
 
-### 3.4.2 例一：1+2+3+4+…+100的和
+### 4.1.1 函数的调用
+当在一个函数的运行期间调用另一个函数是，在运行被调函数之前，系统需要完成三件事：<br>
+   - 1.将所有的实际参数，返回地址等信息传递给被调函数保存
+   - 2.为被调函数的局部变量（也包括形参）分配存储空间
+   - 3.将控制转移到被调函数的入口
+
+从被调函数返回主调函数之前，系统也要完成三件事：
+   - 1.保存被调函数的返回结果
+   - 2.释放被调函数所占的存储空间
+   - 3.依照被调函数保存的返回地址将控制转移到调用函数
+<br>
+当有多个函数相互调用时，按照“后调用先返回”的原则，上述函数之间信息传递和控制转移必须借助“栈”来实现，即系统将整个程序运行时所需的数据空间安排在一个栈中，每当调用一个函数是，就在栈顶分配一个存储区，进行压栈操作，每当一个函数退出时，就释放它的存储区，执行出栈操作，当前运行的函数永远都在栈顶位置。<br>
+
+### 4.1.2 递归要满足的三个条件
+1. 递归必须得有一个明确的终止条件<br>
+2. 该函数所处理的数据规模必须在递减（递归的值可以递增）<br>
+3. 这个转化必须是可解的<br>
+
+### 4.1.3 循环和递归的关系：什么时候使用递归？
+理论上循环能解决的问题，肯定可以转化为递归解决，但是这个过程是复杂的数学转化过程，递归能解决的问题不一定能转化为循环解决。<br>
+递归：易于理解，存储空间大，但速度慢。<br>
+循环：不易理解，速度快，存储空间小。<br>
+
+## 4.2 例一：1+2+3+4+…+100的和
 实现代码：
 
 ```
@@ -1037,7 +1060,7 @@ int main(void)
 }
 ```
 
-### 3.4.3 例二：求阶乘
+## 4.3 例二：求阶乘
 使用For循环的实现代码：
 
 ```
@@ -1114,20 +1137,371 @@ int main(void)
 }
 ```
 
-### 3.4.4 例三：汉诺塔
-汉诺塔的规则在于n与n-1的差值为2^(n-1) <br>
-3.4.5 走迷宫
-4 模块二：非线性结构
-树
-图
-5 模块三：查找和排序
-折半查找
-排序：冒泡
-		插入
-		选择
-		快速排序
-		归并排序
-6 Java中容器和数据结构相关知识
-Ierator接口
-Map
-哈希表
+## 4.4 例三：汉诺塔
+实现原理（N>1）：<br>
+   - 1.先将N-1个盘子从A柱借助C柱移到B柱；
+   - 2.将第N个盘子从A柱移到C柱；
+   - 3.将N-1个盘子从B柱借助A柱移到C柱；
+
+实现代码：
+
+```
+/*汉诺塔问题使用递归实现方法，求出每次移动路径*/
+
+#include <stdio.h>
+
+void hannot(int n, char A, char B, char C)
+{
+    if (n == 1)
+    {
+        printf("将编号为%d的盘子直接从%c柱子移到%c柱子\n", n, A, C);
+    }
+    else
+    {
+        hannot(n-1, A, C, B);
+        printf("将编号为%d的盘子直接从%c柱子移到%c柱子\n", n, A, C);
+        hannot(n-1, B, A, C);
+    }
+}
+
+int main(void)
+{
+    char ch1 = 'A';
+    char ch2 = 'B';
+    char ch3 = 'C';
+    int n;
+
+    printf("请输入要移动盘子的个数：");
+    scanf("%d", &n);
+
+    hannot(n, 'A', 'B', 'C');
+
+}
+```
+
+# 5 模块二：非线性结构
+## 5.1 树
+### 5.1.1 定义
+#### 5.1.1.1 专业定义
+1. 有且只有一个称为根的节点<br>
+2. 有若干个互不相交的子树，这些子树本身也是一棵树
+
+#### 5.1.1.2 通俗的定义
+1. 树是由节点和边（线）组成<br>
+2. 每个节点只有一个父节点，但可以有多个子节点<br>
+3. 但有一个节点例外，该节点没有父节点，此节点称为根节点
+
+#### 5.1.1.3 专业术语
+节点<br>
+父节点<br>
+子节点<br>
+子孙<br>
+堂兄弟<br>
+深度：从根节点到最底层节点的层数称之为深度，根节点是第一层<br>
+叶子节点：没有子节点的节点<br>
+非终端节点：实际就是非叶子节点<br>
+度：子节点的个数称为度
+
+### 5.1.2 分类
+一般树：任意一个节点的子节点的个数都不受限制<br>
+二叉树：任意一个节点的子节点个数最多两个，且子节点的位置不可更改<br>
+森林：n个互不相交的树的集合
+
+#### 5.1.2.1 二叉树的分类
+一般二叉树<br>
+满二叉树：在不增加树的层数的前提下，无法再多添加一个节点的二叉树就是满二叉树<br>
+完全二叉树：如果只是删除了满二叉树最底层最右边的连续若干个节点，这样形成的二叉树就是完全二叉树
+
+### 5.1.3 存储
+#### 5.1.3.1 二叉树的存储
+连续存储【完全二叉树】: 一般二叉树要以数组的方式存储，要先转化成完全二叉树，因为如果只有效节点（无论以哪种规则：先序，中序，后序），则无法知道这个树的原本样子。
+   - 优点：查找某个节点的父节点和子节点（也包括判断有没有子节点）速度很快
+   - 缺点：耗用内存空间过大
+
+链式存储<br>
+优点：
+   - 消耗内存空间小，只存放有效节点，只浪费空指针域的空间。N个节点二叉树只浪费N+1个空间；
+   - 存储空间不需要连续，离散，通过指针域连成一个连续的树；
+缺点：求父节点很麻烦
+
+#### 5.1.3.2 一般树的存储
+双亲表示法：
+   - 求父节点方便
+
+孩子表示法：
+   - 求子节点方便，求父节点麻烦
+
+双亲孩子表示法：
+   - 求父节点和子节点都很方便，但是操作不方便
+
+二叉树表示法：
+   - 把一个普通树转换成二叉树来存储
+     - 具体转换方法：设法保证任意一个节点的左指针域指向第一个孩子，右指针域指向它的下一个兄弟，只要满足这个条件，就可以把一个普通树转化为二叉树。（一个普通树转化成的二叉树一定没有右子树）
+
+#### 5.1.3.3 森林的存储
+把森林转换成二叉树来存储：将任意一个节点的左指针域指向第一个孩子，右指针域指向它的下一个兄弟（不同树也可称之为兄弟）
+
+### 5.1.4 相关操作
+#### 5.1.4.1 遍历（递归思想）
+先序遍历【先访问根节点】
+   - 先访问根节点
+   - 再先序访问左子树
+   - 再先序访问右子树
+
+中序遍历【中间访问根节点】
+   - 中序遍历左子树
+   - 再访问根节点
+   - 再中序遍历右子树
+
+后序遍历【最后访问根节点】
+   - 后序遍历左子树
+   - 后序遍历右子树
+   - 再访问根节点
+
+#### 5.1.4.2 已知两种遍历求原始二叉树
+通过先序和中序或者中序和后序，我们可以还原出原始的二叉树，但是通过先序和后续是无法还原出原始的二叉树的。<br>
+另一种说法：只有通过先序和中序，或通过中序和后序，我们才可以唯一的确定一个二叉树
+
+### 5.1.5 应用
+树是数据库中数据组织的一种重要形式<br>
+操作系统子父进程的关系本身就是一棵树<br>
+面向对象语言中类的继承关系本身就是一棵树<br>
+赫夫曼树
+
+### 5.1.6 链式二叉树静态创建遍历实现代码：
+
+```
+/*静态BTree*/
+
+#include <stdio.h>
+#include <malloc.h>
+
+//一个二叉树包含三个部分，数据，左指针域和右指针域
+struct BTNode
+{
+    int data;
+    struct BTNode * pLchild; 
+    struct BTNode * pRchild;
+};
+
+struct BTNode * CreateBTree(void);
+void PreTraverseBTree(struct BTNode * pT);
+void InTraverseBTree(struct BTNode * pT);
+void PostTraverseBTree(struct BTNode * pT);
+
+int main (void)
+{
+    struct BTNode *pT = CreateBTree();
+
+    // PreTraverseBTree(pT); //先序遍历
+    // InTraverseBTree(pT); //中序遍历
+    PostTraverseBTree(pT); //后序遍历
+
+    return 0;
+}
+
+void PreTraverseBTree(struct BTNode * pT)
+{
+    if (NULL != pT)
+    {
+        printf("%c\n", pT->data);
+        if (NULL != pT->pLchild)
+        {
+           PreTraverseBTree(pT->pLchild); 
+        }
+        
+        if (NULL != pT->pRchild)
+        {
+            PreTraverseBTree(pT->pRchild);
+        }
+    } 
+
+    return;
+}
+
+void InTraverseBTree(struct BTNode * pT)
+{
+    if (NULL != pT)
+    {
+        if (NULL != pT->pLchild)
+        {
+           InTraverseBTree(pT->pLchild); 
+        }
+        printf("%c\n", pT->data);
+
+        if (NULL != pT->pRchild)
+        {
+            InTraverseBTree(pT->pRchild);
+        }
+    }
+
+    return;
+}
+
+void PostTraverseBTree(struct BTNode * pT)
+{
+    if (NULL != pT)
+    {
+        if (NULL != pT->pLchild)
+        {
+           PostTraverseBTree(pT->pLchild); 
+        }
+
+        if (NULL != pT->pRchild)
+        {
+            PostTraverseBTree(pT->pRchild);
+        }
+
+        printf("%c\n", pT->data);
+    }
+
+    return;
+}
+
+struct BTNode * CreateBTree(void)
+{
+    struct BTNode * pA = (struct BTNode *)malloc(sizeof(struct BTNode));
+    struct BTNode * pB = (struct BTNode *)malloc(sizeof(struct BTNode));
+    struct BTNode * pC = (struct BTNode *)malloc(sizeof(struct BTNode));
+    struct BTNode * pD = (struct BTNode *)malloc(sizeof(struct BTNode));
+    struct BTNode * pE = (struct BTNode *)malloc(sizeof(struct BTNode));
+    
+    pA->data = 'A';
+    pB->data = 'B';
+    pC->data = 'C';
+    pD->data = 'D';
+    pE->data = 'E';
+
+    pA->pLchild = pB;
+    pA->pRchild = pC;
+    pB->pLchild = pB->pRchild = NULL;
+    pC->pLchild = pD;
+    pC->pRchild = NULL;
+    pD->pLchild = NULL;
+    pD->pRchild = pE;
+    pE->pLchild = pE->pRchild = NULL;
+
+    return pA;
+};
+```
+
+# 6 模块三：查找和排序
+## 6.1 折半查找
+## 6.2 排序
+排序需要考虑三个问题：时间、空间和稳定性
+
+### 6.2.1 冒泡
+升序：两两对比，把大的值放后面，并重复
+
+### 6.2.2 插入
+把后面的数依次插入前面，保证前几个数的有序，并重复
+
+### 6.2.3 选择
+找出后面的数中的最小值，与第一个数进行互换，并重复
+
+```
+/*直接选择排序*/
+
+#include <stdio.h>
+
+void sort(int * a, int len)
+{
+    int i, j, min, t;
+
+    for (i=0; i<len-1; ++i)
+    {
+        for (min=i,j=i+1; j<len; ++j)
+        {
+            if (a[min] > a[j])
+            {
+                min = j;
+            }
+        }
+        if (min != i)
+        {
+            t = a[i];
+            a[i] = a[min];
+            a[min] = t;
+        }
+    }
+}
+
+int main(void)
+{
+    int a[6] = {4, 0, 3, 2, 5, 1};
+
+    sort(a,6);
+
+    for (int i=0; i<6; ++i)
+    {
+        printf("%d\n",a[i]);
+    }
+
+    return 0;
+}
+```
+
+### 6.2.4 快速排序
+先找到某一个元素的确切位置【左边指针找到小的数向右移动，大的数就赋值给右边指针；右边的指针找到大的数就向左移动，小的数就赋值给左边指针】，整个数组会分为左边一半和右边一半，左边一半的数据可以使用同样的方式确定确切位置，以此进行排序。<br>
+实现代码：<br>
+
+```
+/*快速排序实现代码*/
+
+#include <stdio.h>
+
+int FindPos(int *a, int low, int high);
+void QuickSort(int *a, int low, int high);
+
+int main(void)
+{
+    int a[6] = {2, 1, 0, 5, 4, 3};
+    int i;
+
+    QuickSort(a, 0, 5); //第二个参数表示第一个元素的下标，第三个参数表示最后一个元素的下标
+
+    for (i=0; i<6; ++i)
+    {
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+
+void QuickSort(int *a, int low, int high)
+{
+    int pos;
+    if (low < high)
+    {
+        pos = FindPos(a, low, high);
+        QuickSort(a, low, pos-1);
+        QuickSort(a, pos+1, high);
+    }
+}
+
+int FindPos(int *a, int low, int high)
+{
+    int val = a[low];
+
+    while (low < high)
+    {
+        while (low < high && a[high] >= val)
+            --high;
+        a[low] = a[high];
+
+        while (low < high && a[low] <= val)
+            ++low;
+        a[high] = a[low];
+    }
+    a[low] = val;
+
+    return low;
+}
+```
+
+### 6.2.5 归并排序
+先两两排序，在四个四个排序，再八个八个排序
+
+## 6.3 排序和查找的关系
+排序是查找的前提，排序是重点
